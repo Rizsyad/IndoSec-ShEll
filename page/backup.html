@@ -1,0 +1,42 @@
+<div class="content mt-3">
+  <div class="col">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+            <h4 class="text-center">Zip / Unzip</h4>
+            <form enctype="multipart/form-data" method="post">
+                <div class="form-group">
+                    <label>Zip File:</label>
+                    <div class="custom-file">
+                        <input type="file" name="zip_file" class="custom-file-input" id="customFile">
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                    </div>
+                    <input type="submit" name="upnun" class="btn btn-danger btn-block mt-3" value="Upload & Unzip"/>
+                </div>
+            </form>
+            <div class='row'>
+                <div class='col-md-6 mb-3'>
+                    <h5>Zip Backup</h5>
+                    <form method='post'>
+                        <label>Folder</label>
+                        <input type='text' name='folder' class='form-control mb-3' value='{{PATH}}'>
+                        <input type='submit' name='backup' class='btn btn-danger btn-block' value='Backup!'>
+                    </form>
+                </div>
+                <div class='col-md-6'>
+                    <h5>Unzip Manual</h5>
+                    <form action='' method='post'>
+                        <label>Zip Location:</label>
+                        <input type='text' name='file_zip' class='form-control mb-3' value='{{PATHZIP}}'>
+                        <input type='submit' name='extrak' class='btn btn-danger btn-block' value='Unzip!'>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>

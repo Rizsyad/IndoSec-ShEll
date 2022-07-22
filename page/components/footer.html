@@ -1,0 +1,79 @@
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+    
+    <script>
+      console.log = console.warn = console.error = () => {};
+
+      (function($){
+        "use strict"; 
+
+        $("#menuToggle").on("click", function (event) {
+          $("body").toggleClass("open");
+        });
+
+        function humanFileSize(size) {
+          var i = size == 0 ? 0 : Math.floor( Math.log(size) / Math.log(1024) );
+          return Number((size / Math.pow(1024, i)).toFixed(2)) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+        };
+
+        $('input[type="file"]').on("change", function(){
+					let filenames = [];
+					let files = document.getElementById("customFile").files;
+					if (files.length > 1){
+						filenames.push("Total Files (" + files.length + ")");
+					}else{
+						for (let i in files){
+							if (files.hasOwnProperty(i)){
+								filenames.push(files[i].name);
+							}
+						}
+					}
+					$(this).next(".custom-file-label").html(filenames.join(","));
+				});
+
+        // $('#checkall').change(function() {
+        //     $(".check").prop('checked', $(this).prop("checked"));
+        // })
+
+        var ctx = document.getElementById("myChart");
+        ctx.height = 300;
+        var myChart = new Chart( ctx, {
+          type: 'pie',
+          data: {
+            datasets: [ {
+              data: [ "{{FREEUSAGE}}", "{{USAGE}}"],
+              backgroundColor: [
+                "rgba(0, 123, 255,0.5)",
+                "rgb(255, 99, 71)",
+                "rgb(32,178,170)"
+              ],
+              hoverBackgroundColor: [
+                "rgba(0, 123, 255, 0.5)",
+                "rgb(255, 99, 71)",
+                "rgb(32,178,170)"
+              ]
+            }],
+            labels: [
+              "Free Usage",
+              "Usage",
+              "{{TOTALUSAGE}}",
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              labels: {
+                render: (args) => {
+                  return  `${args.label}: ${humanFileSize(args.value)}`
+                }
+              }
+            }
+          }
+        });
+      })(jQuery);
+    </script>
+  </body>
+</html>
