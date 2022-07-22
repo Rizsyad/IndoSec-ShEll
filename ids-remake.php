@@ -718,9 +718,9 @@ function adminer()
 
 	pages("blank", ["Database", "Adminer"]);
 
-	if (file_exists("adminer.php")) echo "<a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>"; return;
-	if (downloadAdminer()) echo "<p class='text-center'>Berhasil Membuat Adminer</p><a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>"; return;
-	echo "<p class='text-center text-danger'>Gagal Membuat Adminer</p>";
+	if (file_exists("adminer.php")) echo "<a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>";
+	else if (downloadAdminer()) echo "<p class='text-center'>Berhasil Membuat Adminer</p><a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>";
+	else echo "<p class='text-center text-danger'>Gagal Membuat Adminer</p>";
 }
 
 function backup() {
