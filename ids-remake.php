@@ -716,11 +716,11 @@ function adminer()
 
 	$full = str_replace($_SERVER['DOCUMENT_ROOT'], "", $path);
 
-	pages("blank", ["Database", "Adminer"]);
+	if (file_exists("adminer.php")) $output = "<a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>";
+	else if (downloadAdminer()) $output = "<p class='text-center'>Berhasil Membuat Adminer</p><a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>";
+	else $output = "<p class='text-center text-danger'>Gagal Membuat Adminer</p>";
 
-	if (file_exists("adminer.php")) echo "<a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>";
-	else if (downloadAdminer()) echo "<p class='text-center'>Berhasil Membuat Adminer</p><a href='$full/adminer.php' target='_blank' class='text-center btn btn-success btn-block mb-3'>Login Adminer</a>";
-	else echo "<p class='text-center text-danger'>Gagal Membuat Adminer</p>";
+	pages("adminer", ["Database", "Adminer"], array("{{OUTPUT}}"), array($output));
 }
 
 function backup() {
