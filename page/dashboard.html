@@ -51,12 +51,41 @@
         </div>
       </div>
     </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="stat-widget-four">
+            <div class="stat-icon dib">
+              <i class="fa fa-server"></i>
+            </div>
+            <div class="stat-content">
+              <div class="text-left dib">
+                <div class="stat-heading">IP</div>
+                <div class="stat-text">Client: {{IPCLIENT}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6"></div>
+    <div class="col-lg-4 col-md-6"></div>
     <div class="col-lg-6">
       <div class="card">
         <div class="card-body">
           <h4 class="mb-3">Informasi </h4>
           <table class="table">
             <tbody>
+              <tr>
+                <td>Software</td>
+                <td>:</td>
+                <td>{{SOFT}}</td>
+              </tr>
+              <tr>
+                <td>Sistem Operasi</td>
+                <td>:</td>
+                <td>{{OS}}</td>
+              </tr>
               <tr>
                 <td>Apache Modules</td>
                 <td>:</td>
@@ -91,16 +120,6 @@
                 <td>Safe Mode</td>
                 <td>:</td>
                 <td>{{SM}}</td>
-              </tr>
-              <tr>
-                <td>Software</td>
-                <td>:</td>
-                <td>{{SOFT}}</td>
-              </tr>
-              <tr>
-                <td>Sistem Operasi</td>
-                <td>:</td>
-                <td>{{OS}}</td>
               </tr>
             </tbody>
           </table>
