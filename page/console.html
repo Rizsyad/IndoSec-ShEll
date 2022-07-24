@@ -1,0 +1,158 @@
+<div class="content mt-3">
+  <div class="col">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            <div class="row">
+              <div class="col">
+                <select name="cheat" id="" class="form-control">
+                  <option value="">Select Cheat Sheet</option>
+                  <option value="ls -lha">List dir</option>
+                  <option value="lsattr -va">
+                    list file attributes on a Linux second extended file system
+                  </option>
+                  <option value="netstat -an | grep -i listen">
+                    show opened ports
+                  </option>
+                  <option value="ps aux">process status</option>
+                  <optgroup label="-Find-"></optgroup>
+                  <option value="find / -type f -perm -04000 -ls">
+                    find all suid files
+                  </option>
+                  <option value="find . -type f -perm -04000 -ls">
+                    find suid files in current dir
+                  </option>
+                  <option value="find / -type f -perm -02000 -ls">
+                    find all sgid files
+                  </option>
+                  <option value="find . -type f -perm -02000 -ls">
+                    find sgid files in current dir
+                  </option>
+                  <option value="find / -type f -name config.inc.php">
+                    find config.inc.php files
+                  </option>
+                  <option value='find / -type f -name "config*"'>
+                    find config* files
+                  </option>
+                  <option value='find . -type f -name "config*"'>
+                    find config* files in current dir
+                  </option>
+                  <option value="find / -perm -2 -ls">
+                    find all writable folders and files
+                  </option>
+                  <option value="find . -perm -2 -ls">
+                    find all writable folders and files in current dir
+                  </option>
+                  <option value="find / -type f -name service.pwd">
+                    find all service.pwd files
+                  </option>
+                  <option value="find . -type f -name service.pwd">
+                    find service.pwd files in current dir
+                  </option>
+                  <option value="find / -type f -name .htpasswd">
+                    find all .htpasswd files
+                  </option>
+                  <option value="find . -type f -name .htpasswd">
+                    find .htpasswd files in current dir
+                  </option>
+                  <option value="find / -type f -name .bash_history">
+                    find all .bash_history files
+                  </option>
+                  <option value="find . -type f -name .bash_history">
+                    find .bash_history files in current dir
+                  </option>
+                  <option value="find / -type f -name .fetchmailrc">
+                    find all .fetchmailrc files
+                  </option>
+                  <option value="find . -type f -name .fetchmailrc">
+                    find .fetchmailrc files in current dir
+                  </option>
+                  <optgroup label="-Locate-"></optgroup>
+                  <option value="locate httpd.conf">
+                    locate httpd.conf files
+                  </option>
+                  <option value="locate vhosts.conf">
+                    locate vhosts.conf files
+                  </option>
+                  <option value="locate proftpd.conf">
+                    locate proftpd.conf files
+                  </option>
+                  <option value="locate psybnc.conf">
+                    locate psybnc.conf files
+                  </option>
+                  <option value="locate my.conf">locate my.conf files</option>
+                  <option value="locate admin.php">
+                    locate admin.php files
+                  </option>
+                  <option value="locate cfg.php">locate cfg.php files</option>
+                  <option value="locate conf.php">locate conf.php files</option>
+                  <option value="locate config.dat">
+                    locate config.dat files
+                  </option>
+                  <option value="locate config.php">
+                    locate config.php files
+                  </option>
+                  <option value="locate config.inc">
+                    locate config.inc files
+                  </option>
+                  <option value="locate config.inc.php">
+                    locate config.inc.php
+                  </option>
+                  <option value="locate config.default.php">
+                    locate config.default.php files
+                  </option>
+                  <option value="locate config">locate config* files</option>
+                  <option value="locate '.conf'">locate .conf files</option>
+                  <option value="locate '.pwd'">locate .pwd files</option>
+                  <option value="locate '.sql'">locate .sql files</option>
+                  <option value="locate '.htpasswd'">
+                    locate .htpasswd files
+                  </option>
+                  <option value="locate '.bash_history'">
+                    locate .bash_history files
+                  </option>
+                  <option value="locate '.mysql_history'">
+                    locate .mysql_history files
+                  </option>
+                  <option value="locate '.fetchmailrc'">
+                    locate .fetchmailrc files
+                  </option>
+                  <option value="locate backup">locate backup files</option>
+                  <option value="locate dump">locate dump files</option>
+                  <option value="locate priv">locate priv files</option>
+                </select>
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-primary">GO</button>
+              </div>
+            </div>
+
+            <textarea
+              id=""
+              cols="30"
+              rows="15"
+              readonly="readonly"
+              class="form-control mt-3"
+              wrap="off"
+            >
+{{OUTPUT}}</textarea
+            >
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text">$</span>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                aria-label="Username"
+                aria-describedby="basic-addon1"
+                name="console"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

