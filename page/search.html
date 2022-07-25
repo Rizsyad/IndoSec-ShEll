@@ -1,0 +1,56 @@
+<div class="content mt-3">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="text-center mb-4">{ Search }</h4>
+          <form method="post">
+            <div class="form-group">
+              <label for="method">Method: </label>
+              <select name="method" id="" class="form-control">
+                <option value="ffn">Find File By Name</option>
+                <option value="fsf">Find String In File</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="method">String: </label>
+              <input type="text" name="string" id="" class="form-control" />
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="method">Dir: </label>
+                  <input
+                    type="text"
+                    name="dir"
+                    id=""
+                    class="form-control"
+                    value="{{DIR}}"
+                  />
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="method">Ext: (* = all Ext) </label>
+                  <input
+                    type="text"
+                    name="ext"
+                    id=""
+                    class="form-control"
+                    value="php"
+                  />
+                </div>
+              </div>
+            </div>
+            <textarea class="form-control mb-3" cols="30" rows="8">
+{{OUTPUT}}</textarea
+            >
+            <button type="submit" class="btn btn-primary btn-block">
+              Search
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
