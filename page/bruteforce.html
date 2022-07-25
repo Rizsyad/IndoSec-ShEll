@@ -1,0 +1,105 @@
+<div class="content mt-3">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="text-center">{ Brute Force }</h4>
+          <form method="post">
+            <div class="form-group">
+              <label for="login">Login Page</label>
+              <select name="login" id="login" class="form-control">
+                <option value="cp">Cpanel</option>
+                <option value="ftp">FTP</option>
+                <option value="DirectAdmin">DirectAdmin</option>
+                <option value="DirectAdminMysql">
+                  PhpMyAdmin[DirectAdmin]
+                </option>
+                <option value="mysqli_connect">mysqli_connect()</option>
+                <option value="ftp_connect">ftp_connect()</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="protocol">Protocol</label>
+              <select name="protocol" id="protocol" class="form-control">
+                <option value="http://">http://</option>
+                <option value="https://">https://</option>
+                <option value="ftp://">ftp://</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label for="url">Url</label>
+                  <input
+                    type="text"
+                    name="url"
+                    id="url"
+                    class="form-control"
+                    placeholder=""
+                    value="localhost"
+                  />
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label for="port">Port</label>
+                  <input
+                    type="text"
+                    name="port"
+                    id="port"
+                    class="form-control"
+                    placeholder=""
+                    value="2082"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <label for="listu">Username List</label>
+                <textarea
+                  name="ulist"
+                  id="listu"
+                  cols="30"
+                  rows="10"
+                  class="form-control"
+                >
+{{ULIST}}</textarea
+                >
+              </div>
+              <div class="col">
+                <label for="listp">Password List</label>
+                <textarea
+                  name="plist"
+                  id="listp"
+                  cols="30"
+                  rows="10"
+                  class="form-control"
+                ></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="save">Save Output</label>
+              <input
+                type="text"
+                name="save"
+                id=""
+                value="cracked.txt"
+                class="form-control"
+              />
+            </div>
+            <div class="my-3">{{OUTPUT}}</div>
+
+            <button
+              type="submit"
+              class="btn btn-primary btn-block"
+              name="crack"
+            >
+              Crack
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

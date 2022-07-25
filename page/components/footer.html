@@ -34,9 +34,51 @@
 					$(this).next(".custom-file-label").html(filenames.join(","));
 				});
 
-        // $('#checkall').change(function() {
-        //     $(".check").prop('checked', $(this).prop("checked"));
-        // })
+        $("#login").on("change", function(){
+          var login = $(this).val();
+          var port = $("#port");
+          var protocol = $("#protocol");
+          var url = $("#url");
+
+          switch (login) {
+            case "ftp":
+              url.val("localhost");
+              protocol.val("ftp://").change();
+              port.val("Disabled");
+              port.attr("disabled", true);
+              break;
+            case "cp":
+              url.val("localhost");
+              protocol.val("http://").change();
+              port.val("2082");
+              port.attr("disabled", false);
+              break;
+            case "DirectAdmin":
+              url.val("localhost");
+              protocol.val("http://").change();
+              port.val("2222");
+              port.attr("disabled", false);
+              break;
+            case "DirectAdminMysql":
+              url.val("localhost");
+              protocol.val("http://").change();
+              port.val("Disabled");
+              port.attr("disabled", true);
+              break;
+            case "mysqli_connect":
+              url.val("localhost");
+              protocol.val("http://").change();
+              port.val("3306");
+              port.attr("disabled", false);
+              break;
+            case "ftp_connect":
+              url.val("ftp.example.com");
+              protocol.val("http://").change();
+              port.val("21");
+              port.attr("disabled", false);
+              break;
+          }
+        })
 
         var ctx = document.getElementById("myChart");
         ctx.height = 300;
