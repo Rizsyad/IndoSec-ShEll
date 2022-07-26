@@ -56,19 +56,37 @@
         <div class="card-body">
           <div class="stat-widget-four">
             <div class="stat-icon dib">
-              <i class="fa fa-server"></i>
+              <i class="fa-solid fa-ranking-star"></i>
             </div>
             <div class="stat-content">
               <div class="text-left dib">
-                <div class="stat-heading">IP</div>
-                <div class="stat-text">Client: {{IPCLIENT}}</div>
+                <div class="stat-heading">Alexa Rank</div>
+                <div class="stat-text">Global: {{RANKGLOBAL}}</div>
+                <div class="stat-text">Country ({{COUNTRY}}): {{RANKCOUNTRY}}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-md-6"></div>
+    <div class="col-lg-4 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="stat-widget-four">
+            <div class="stat-icon dib">
+              <i class="fa-solid fa-ranking-star"></i>
+            </div>
+            <div class="stat-content">
+              <div class="text-left dib">
+                <div class="stat-heading">DA/PA Rank</div>
+                <div class="stat-text">DA (Domain Authority): {{DARANK}}</div>
+                <div class="stat-text">PA (Page Authority): {{PARANK}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="col-lg-4 col-md-6"></div>
     <div class="col-lg-6">
       <div class="card">

