@@ -4,42 +4,38 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.turbolinks/2.1.0/jquery.turbolinks.min.js"></script>
-
     <script>
       $(document).ready(function () {
-          "use strict";
+        "use strict";
+        function humanFileSize(size) {
+          var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+          return (
+            Number((size / Math.pow(1024, i)).toFixed(2)) * 1 +
+            " " +
+            ["B", "kB", "MB", "GB", "TB"][i]
+          );
+        }
 
-          function humanFileSize(size) {
-              var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-              return Number((size / Math.pow(1024, i)).toFixed(2)) * 1 + ' ' + [
-                  'B',
-                  'kB',
-                  'MB',
-                  'GB',
-                  'TB'
-              ][i];
-          };
-
-        $("#menuToggle").on("click", function (event) {
+        $("#menuToggle").on("click", function () {
           $("body").toggleClass("open");
         });
 
-        $('input[type="file"]').on("change", function() {
-					let filenames = [];
-					let files = document.getElementById("customFile").files;
-					if (files.length > 1){
-						filenames.push("Total Files (" + files.length + ")");
-					}else{
-						for (let i in files){
-							if (files.hasOwnProperty(i)){
-								filenames.push(files[i].name);
-							}
-						}
-					}
-					$(this).next(".custom-file-label").html(filenames.join(","));
-				});
+        $('input[type="file"]').on("change", function () {
+          var filenames = [];
+          var files = document.getElementById("customFile").files;
+          if (files.length > 1) {
+            filenames.push("Total Files (" + files.length + ")");
+          } else {
+            for (var i in files) {
+              if (files.hasOwnProperty(i)) {
+                filenames.push(files[i].name);
+              }
+            }
+          }
+          $(this).next(".custom-file-label").html(filenames.join(","));
+        });
 
-        $("#login").on("change", function(){
+        $("#login").on("change", function () {
           var login = $(this).val();
           var port = $("#port");
           var protocol = $("#protocol");
@@ -83,44 +79,43 @@
               port.attr("disabled", false);
               break;
           }
-        })
-
-        var ctx = document.getElementById("myChart");
-        ctx.height = 300;
-        var myChart = new Chart( ctx, {
-          type: 'pie',
-          data: {
-            datasets: [ {
-              data: [ "{{FREEUSAGE}}", "{{USAGE}}"],
-              backgroundColor: [
-                "rgba(0, 123, 255,0.5)",
-                "rgb(255, 99, 71)",
-                "rgb(32,178,170)"
-              ],
-              hoverBackgroundColor: [
-                "rgba(0, 123, 255, 0.5)",
-                "rgb(255, 99, 71)",
-                "rgb(32,178,170)"
-              ]
-            }],
-            labels: [
-              "Free Usage",
-              "Usage",
-              "{{TOTALUSAGE}}",
-            ]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              labels: {
-                render: (args) => {
-                  return  `${args.label}: ${humanFileSize(args.value)}`
-                }
-              }
-            }
-          }
         });
 
+        if(window.location.search == "") {
+          var ctx = document.getElementById("myChart");
+          ctx.height = 300;
+          var myChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+              datasets: [
+                {
+                  data: ["{{FREEUSAGE}}", "{{USAGE}}"],
+                  backgroundColor: [
+                    "rgba(0, 123, 255,0.5)",
+                    "rgb(255, 99, 71)",
+                    "rgb(32,178,170)",
+                  ],
+                  hoverBackgroundColor: [
+                    "rgba(0, 123, 255, 0.5)",
+                    "rgb(255, 99, 71)",
+                    "rgb(32,178,170)",
+                  ],
+                },
+              ],
+              labels: ["Free Usage", "Usage", "{{TOTALUSAGE}}"],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                labels: {
+                  render: (args) => {
+                    return `${args.label}: ${humanFileSize(args.value)}`;
+                  },
+                },
+              },
+            },
+          });
+        }
       });
     </script>
   </body>
